@@ -1,0 +1,90 @@
+.container {
+    margin-left: 26px;
+    margin-right: 26px;
+    margin-top: 10px;
+    border: 1px solid;
+    box-shadow: 5px 10px 8px #888888;
+}
+
+.upperBlock {
+    border: 0.1px solid;
+    display: flex;
+    justify-content: space-around;
+}
+
+.close {
+    flex-grow: 0.5;
+    align-content: flex-end;
+    margin-top: 16px;
+}
+
+#check {
+    text-decoration-color: black;
+    font-weight: bold;
+    margin-top: 20px;
+    flex-grow: 7;
+    margin-left: 19px;
+}
+
+#pay {
+    font-weight: bold;
+}
+
+.lowerBlock {
+    display: flex;
+    justify-content: space-around;
+}
+
+#lowerBlock1 {
+    margin: 1em;
+    flex: 2;
+}
+
+#lowerBlock2 {
+    background-color: rgb(157, 167, 167);
+    padding: 1em;
+    flex: 1;
+}
+
+#button {
+    padding-left: 0px;
+    padding-right: 0px;
+    padding-bottom: 0px;
+    padding-top: 0px;
+    border-top-width: 0px;
+    border-left-width: 0px;
+    border-bottom-width: 0px;
+    border-right-width: 0px;
+}
+
+.flex-list {
+    flex: 2;
+    display: flex;
+    position: relative;
+    margin: 1em;
+    overflow: hidden;
+}
+
+.flex-list ul {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-left: -1px;
+}
+
+.flex-list li:after {
+    content: "/";
+    flex-grow: 1;
+    flex-basis: auto;
+    margin: .25em 0;
+    padding: 0 1em;
+    text-align: center;
+}
+
+.flex-list li:last-child:after {
+    content: "";
+}
+
+.upperBlock2 {
+    flex-grow: 20;
+}
