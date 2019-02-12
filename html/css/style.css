@@ -1,4 +1,5 @@
 .container {
+    background-color: white;
     margin-left: 26px;
     margin-right: 26px;
     margin-top: 10px;
@@ -201,4 +202,11 @@ small {
 .price {
     text-align: right;
     font-size: 12px;
+}
+
+.super-container {
+    background-image: url("../images/cards/background.jpg");
+    background-size: contain;
+    border: 1px solid white;
+    padding-bottom: 50px;
 }
