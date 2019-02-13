@@ -8,22 +8,22 @@
 }
 
 .upperBlock {
-    border: 0.1px solid;
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
 }
 
 .close {
-    flex-grow: 0.5;
-    align-content: flex-end;
+    flex: 0.1;
+    text-align: right;
     margin-top: 16px;
+    margin-right: 8px;
 }
 
 .check {
     text-decoration-color: black;
     font-weight: bold;
     margin-top: 20px;
-    flex-grow: 7;
+    flex: 1;
     margin-left: 19px;
 }
 
@@ -36,26 +36,15 @@
     justify-content: space-around;
 }
 
-#lowerBlock1 {
+.lowerBlock1 {
     margin: 1em;
     flex: 1.7;
 }
 
-#lowerBlock2 {
+.lowerBlock2 {
     background-color: rgb(246, 251, 255);
     padding: 1em;
     flex: 1;
-}
-
-#button {
-    padding-left: 0px;
-    padding-right: 0px;
-    padding-bottom: 0px;
-    padding-top: 0px;
-    border-top-width: 0px;
-    border-left-width: 0px;
-    border-bottom-width: 0px;
-    border-right-width: 0px;
 }
 
 .flex-list {
@@ -87,7 +76,7 @@
 }
 
 .upperBlock2 {
-    flex-grow: 20;
+    flex: 3;
 }
 
 .wallet-header h4 {
@@ -107,7 +96,7 @@
 
 .wallet-images img {
     width: 30%;
-    height: 130px;
+    height: 25%;
 }
 
 .newCard-input {
@@ -209,4 +198,57 @@ small {
     background-size: contain;
     border: 1px solid white;
     padding-bottom: 50px;
+}
+
+@media only screen and (min-width: 992px) {
+    .container {
+        margin-left: 100px;
+        margin-right: 100px;
+    }
+}
+
+@media only screen and (max-width: 992px) {
+    .container {
+        margin-left: 20px;
+        margin-right: 20px;
+    }
+    .lowerBlock1 {
+        flex: 3;
+    }
+    .lowerBlock2 {
+        flex: 2;
+    }
+}
+
+@media only screen and (max-width: 992px) and (min-width:768px) {
+    .lowerBlock1 {
+        flex: 1;
+    }
+    .lowerBlock2 {
+        flex: 1;
+    }
+}
+
+@media only screen and (max-width: 600px) {
+    .lowerBlock {
+        display: flex;
+        flex-direction: column-reverse;
+    }
+}
+
+@media only screen and (max-width:400px) {
+    .wallet-images img {
+        width: 100%;
+        height: auto;
+    }
+    .wallet-images {
+        display: flex;
+        flex-direction: column;
+    }
+}
+
+@media only screen and (max-width:768px) {
+    .upperBlock2 {
+        display: none;
+    }
 }
