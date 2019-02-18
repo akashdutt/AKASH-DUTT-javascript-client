@@ -1,4 +1,5 @@
 .container {
+    background-color: white;
     margin-left: 26px;
     margin-right: 26px;
     margin-top: 10px;
@@ -18,7 +19,7 @@
     margin-top: 16px;
 }
 
-#check {
+.check {
     text-decoration-color: black;
     font-weight: bold;
     margin-top: 20px;
@@ -37,11 +38,11 @@
 
 #lowerBlock1 {
     margin: 1em;
-    flex: 2;
+    flex: 1.7;
 }
 
 #lowerBlock2 {
-    background-color: rgb(157, 167, 167);
+    background-color: rgb(246, 251, 255);
     padding: 1em;
     flex: 1;
 }
@@ -87,4 +88,125 @@
 
 .upperBlock2 {
     flex-grow: 20;
+}
+
+.wallet-header h4 {
+    border-bottom: 1px solid grey;
+}
+
+.newCard-header h4 {
+    border-bottom: 1px solid grey;
+}
+
+.wallet-images {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.wallet-images img {
+    width: 30%;
+    height: 130px;
+}
+
+.newCard-input {
+    display: flex;
+    justify-content: center;
+}
+
+.newCard-input input {
+    height: 33px;
+}
+
+.flex-list-card li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.flex-list-card li input {
+    border-radius: 4px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    width: 279px;
+}
+
+.DateCvv {
+    display: flex;
+}
+
+.DateCvv li input {
+    width: 132px;
+    margin-right: 10px;
+}
+
+.submit {
+    margin-top: 10px;
+    background-color: #4CAF50;
+    border: none;
+    color: white;
+    padding: 15px 100px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+}
+
+.cart-item div img {
+    margin-right: 10px;
+    width: 40px;
+    height: 40px;
+    border: 7px solid lightgray;
+}
+
+.cart-item {
+    display: flex;
+    justify-content: space-between;
+}
+
+small {
+    font-size: smaller;
+}
+
+.cart-item div h4 {
+    font-weight: bolder;
+}
+
+.cart-item-content {
+    flex: 4;
+    justify-content: left;
+}
+
+.subtotal {
+    display: flex;
+    justify-content: space-between;
+}
+
+.subtotal>div>h6 {
+    margin-bottom: 5px;
+    font-size: 13px;
+    text-align: right;
+}
+
+.grandtotal {
+    display: flex;
+    justify-content: space-between;
+    font-size: 15px;
+}
+
+.total {
+    margin-top: 60px;
+}
+
+.price {
+    text-align: right;
+    font-size: 12px;
+}
+
+.super-container {
+    background-image: url("../images/cards/background.jpg");
+    background-size: contain;
+    border: 1px solid white;
+    padding-bottom: 50px;
 }
