@@ -1,3 +1,4 @@
 import TextFieldDemo from './TextFieldDemo/index';
+import InputDemo from './InputDemo';
 
-export default TextFieldDemo;
+export default { TextFieldDemo, InputDemo };
