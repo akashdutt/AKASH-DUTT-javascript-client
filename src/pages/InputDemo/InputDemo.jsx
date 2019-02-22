@@ -117,11 +117,6 @@ class InputDemo extends Component {
     return false;
   }
 
-  isTouched = () => {
-    const { touched } = this.state;
-    return !!Object.keys(touched).length;
-  }
-
   forBlur =(value) => {
     this.validate(value);
   }
