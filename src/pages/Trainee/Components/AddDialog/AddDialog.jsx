@@ -123,22 +123,13 @@ class AddDialog extends Component {
 
   hasError = () => {
     const { hasError, touched } = this.state;
-    let check = 0;
-    let touchCheck = 0;
+    let ifError = false;
     Object.keys(hasError).forEach((element) => {
-      if (hasError[element] === false) {
-        check += 1;
+      if ((hasError[element] === false) && (touched[element] === true)) {
+        ifError = true;
       }
     });
-    Object.keys(touched).forEach((element) => {
-      if (touched[element] === true) {
-        touchCheck += 1;
-      }
-    });
-    if (check === 4 && touchCheck === 4) {
-      return true;
-    }
-    return false;
+    return ifError;
   }
 
   forBlur =(value) => {
