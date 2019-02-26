@@ -127,6 +127,8 @@ class AddDialog extends Component {
     Object.keys(hasError).forEach((element) => {
       if ((hasError[element] === false) && (touched[element] === true)) {
         ifError = true;
+      } else {
+        ifError = false;
       }
     });
     return ifError;
