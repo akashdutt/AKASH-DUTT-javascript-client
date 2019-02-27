@@ -2,7 +2,7 @@ import { createMuiTheme } from '@material-ui/core/styles';
 
 const theme = createMuiTheme({
   typography: {
-    htmlFontSize: 20,
+    htmlFontSize: 18,
     fontFamily: '"Comic Sans MS", cursive, sans-serif',
   },
 });
