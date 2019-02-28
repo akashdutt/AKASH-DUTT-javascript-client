@@ -21,7 +21,7 @@ const App = () => (
           <Route exact path="/">
             <Redirect to="/trainee" />
           </Route>
-          <PrivateRoute exact path="/trainee" component={Trainee} />
+          <PrivateRoute path="/trainee" component={Trainee} />
           <PrivateRoute exact path="/textfield-demo" component={TextFieldDemo} />
           <PrivateRoute exact path="/input-demo" component={InputDemo} />
           <PrivateRoute exact path="/children-demo" component={ChildrenDemo} />

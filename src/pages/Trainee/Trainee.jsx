@@ -1,44 +1,30 @@
 import React, { Component } from 'react';
-import Button from '@material-ui/core/Button';
-import { AddDialog } from './Components';
+import {
+  BrowserRouter as Route, Switch,
+} from 'react-router-dom';
+import PropTypes from 'prop-types';
+import TraineeList from './TraineeList';
+import TraineeDetail from './TraineeDetail';
 
 class Trainee extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      open: false,
     };
   }
 
-
-  handleClickOpen = (...value) => {
-    this.setState({ open: false });
-    console.log(...value);
-  };
-
-  handleClickButton = () => {
-    this.setState({ open: true });
-  };
-
-  handleClose = () => {
-    this.setState({ open: false }, () => {
-    });
-  };
-
   render() {
-    const { open } = this.state;
+    const { match } = this.props;
+    console.log(match);
     return (
-      <div>
-        <Button variant="outlined" color="primary" onClick={this.handleClickButton}>
-          ADD TRAINEE
-        </Button>
-        <AddDialog
-          open={open}
-          onClose={this.handleClose}
-          onSubmit={this.handleClickOpen}
-        />
-      </div>
+      <Switch>
+        <Route exact path={`${match.path}`} component={TraineeList} />
+        <Route exact path={`${match.path}/:id`} component={TraineeDetail} />
+      </Switch>
     );
   }
 }
+Trainee.propTypes = {
+  match: PropTypes.objectOf(PropTypes.object).isRequired,
+};
 export default Trainee;
