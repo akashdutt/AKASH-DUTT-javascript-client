@@ -22,6 +22,7 @@ const propType = {
   open: PropTypes.bool,
   onClose: PropTypes.func,
   onSubmit: PropTypes.func,
+  classes: PropTypes.objectOf(PropTypes.object).isRequired,
 };
 const defaultProps = {
   open: false,
@@ -165,7 +166,6 @@ class AddDialog extends Component {
       error,
     } = this.state;
     const {
-      // eslint-disable-next-line react/prop-types
       classes,
       onSubmit,
       onClose,
