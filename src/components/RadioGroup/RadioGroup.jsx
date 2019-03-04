@@ -36,7 +36,7 @@ class RadioGroup extends Component {
         {
           options.map(option => (
             <div>
-              <input type="radio" name="Sports" {...rest} onBlur={onBlur} value={option.value} onChange={onChange} />
+              <input type="radio" name="Sports" {...rest} onBlur={onBlur} key={option.label} value={option.value} onChange={onChange} />
               {option.label}
             </div>
           ))

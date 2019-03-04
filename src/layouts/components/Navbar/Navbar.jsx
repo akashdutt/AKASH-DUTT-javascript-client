@@ -5,6 +5,7 @@ import Typography from '@material-ui/core/Typography';
 import Toolbar from '@material-ui/core/Toolbar';
 import Button from '@material-ui/core/Button';
 import { withStyles } from '@material-ui/core/styles';
+import { Link } from 'react-router-dom';
 
 const styles = {
   logOut: {
@@ -12,6 +13,13 @@ const styles = {
   },
   grow: {
     flexGrow: 1,
+  },
+  forButton: {
+    color: 'white',
+    textDecoration: 'none',
+  },
+  forNav: {
+    marginBottom: '25px',
   },
 };
 class Navbar extends Component {
@@ -23,16 +31,16 @@ class Navbar extends Component {
   render() {
     const { classes } = this.props;
     return (
-      <div>
+      <div className={classes.forNav}>
         <AppBar position="static">
           <Toolbar>
             <Typography variant="h6" color="inherit" className={classes.grow}>
             Trainee Portal
             </Typography>
-            <Button color="inherit">Trainee</Button>
-            <Button color="inherit">TEXTFIELD DEMO</Button>
-            <Button color="inherit">INPUT DEMO</Button>
-            <Button color="inherit">CHILDREN DEMO</Button>
+            <Button color="inherit"><Link to="/trainee" className={classes.forButton}>TRAINEE</Link></Button>
+            <Button color="inherit"><Link to="/textfield-demo" className={classes.forButton}>TEXTFIELD DEMO</Link></Button>
+            <Button color="inherit"><Link to="/input-demo" className={classes.forButton}> INPUT DEMO</Link></Button>
+            <Button color="inherit"><Link to="/children-demo" className={classes.forButton}>CHILDREN DEMO</Link></Button>
             <Button color="inherit" className={classes.logOut}>LOGOUT</Button>
           </Toolbar>
         </AppBar>
@@ -43,5 +51,4 @@ class Navbar extends Component {
 Navbar.propTypes = {
   classes: PropTypes.objectOf(PropTypes.object).isRequired,
 };
-export { Navbar };
 export default withStyles(styles)(Navbar);

@@ -54,10 +54,18 @@ class InputDemo extends Component {
 
   handleNameChange = field => (event) => {
     const { touched } = this.state;
-    this.setState({
-      [field]: event.target.value,
-      touched: { ...touched, [field]: true },
-    }, () => this.validate(field));
+    if (field === 'sport') {
+      this.setState({
+        radio: '',
+        [field]: event.target.value,
+        touched: { ...touched, radio: false, [field]: true },
+      });
+    } else {
+      this.setState({
+        [field]: event.target.value,
+        touched: { ...touched, [field]: true },
+      }, () => this.validate(field));
+    }
   }
 
   validate = (value) => {
