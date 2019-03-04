@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {
-  BrowserRouter as Route, Switch,
+  Route, Switch,
 } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import TraineeList from './TraineeList';
@@ -15,12 +15,13 @@ class Trainee extends Component {
 
   render() {
     const { match } = this.props;
-    console.log(match);
     return (
-      <Switch>
-        <Route exact path={`${match.path}`} component={TraineeList} />
-        <Route exact path={`${match.path}/:id`} component={TraineeDetail} />
-      </Switch>
+      <>
+        <Switch>
+          <Route exact path={`${match.path}`} component={TraineeList} />
+          <Route exact path={`${match.path}/:id`} component={TraineeDetail} />
+        </Switch>
+      </>
     );
   }
 }
