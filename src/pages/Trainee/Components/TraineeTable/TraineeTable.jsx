@@ -9,6 +9,8 @@ import TableRow from '@material-ui/core/TableRow';
 import { Paper } from '@material-ui/core';
 import Tooltip from '@material-ui/core/Tooltip';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
+import TablePagination from '@material-ui/core/TablePagination';
+import IconButton from '@material-ui/core/IconButton';
 
 const styles = theme => ({
   root: {
@@ -25,6 +27,11 @@ const styles = theme => ({
     },
     cursor: 'pointer',
   },
+  column: {
+    display: 'flex',
+    padding: 4,
+    marginRight: 20,
+  },
 });
 class TraineeTable extends Component {
   constructor(props) {
@@ -37,66 +44,111 @@ class TraineeTable extends Component {
     onSort(event, property);
   };
 
-  render() {
-    const {
-      classes,
-      id,
-      data,
-      columns,
-      order,
-      orderBy,
-      onSelect,
-    } = this.props;
-    return (
-      <Paper className={classes.root}>
-        <Table className={classes.table} key={id} onRowSelection={onSelect}>
-          <TableHead>
-            <TableRow>
-              {columns.map(Tcell => (
-                <TableCell
-                  key={Tcell.field}
-                  align={Tcell.align}
-                  sortDirection={orderBy === Tcell.field ? order : false}
-                >
-                  <Tooltip
-                    title="Sort"
-                    enterDelay={300}
-                  >
-                    <TableSortLabel
-                      active={orderBy === Tcell.field}
-                      direction={order}
-                      onClick={this.createSortHandler(Tcell.field)}
-                    >
-                      {Tcell.label}
-                    </TableSortLabel>
-                  </Tooltip>
-                </TableCell>
-              ), this)}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {data.map(trainee => (
-              <TableRow
-                key={trainee.id}
-                className={classes.row}
-                onClick={() => onSelect(trainee.id)}
-                hover
-              >
-                {
-                  columns.map(Tcell => (
-                    <TableCell key={Tcell.field} align={Tcell.align}>
-                      {Tcell.format ? Tcell.format(trainee[Tcell.field]) : trainee[Tcell.field]}
-                    </TableCell>
-                  ))
-                }
-              </TableRow>
+ renderHeadings = () => {
+   const { columns, orderBy, order } = this.props;
+   return (
+     columns.map(Tcell => (
+       <TableCell
+         key={Tcell.field}
+         align={Tcell.align}
+         sortDirection={orderBy === Tcell.field ? order : false}
+       >
+         <Tooltip
+           title="Sort"
+           enterDelay={300}
+         >
+           <TableSortLabel
+             active={orderBy === Tcell.field}
+             direction={order}
+             onClick={this.createSortHandler(Tcell.field)}
+           >
+             {Tcell.label}
+           </TableSortLabel>
+         </Tooltip>
+       </TableCell>
+     ), this));
+ }
 
-            ))}
-          </TableBody>
-        </Table>
-      </Paper>
-    );
-  }
+ tableIcon = (trainee) => {
+   const { actions, classes } = this.props;
+   return (
+     actions.map(act => (
+       <IconButton onClick={() => act.handler(trainee)} className={classes.column}>
+         {act.icon}
+       </IconButton>
+     ))
+   );
+ }
+
+renderRows = () => {
+  const {
+    classes,
+    data,
+    columns,
+    onSelect,
+  } = this.props;
+  return (
+    data.map(trainee => (
+      <TableRow
+        key={trainee.id}
+        className={classes.row}
+        hover
+      >
+        {
+          columns.map(Tcell => (
+            <TableCell key={Tcell.field} align={Tcell.align} onClick={() => onSelect(trainee.id)}>
+              {Tcell.format ? Tcell.format(trainee[Tcell.field]) : trainee[Tcell.field]}
+            </TableCell>
+          ))
+        }
+        <TableCell>
+          {this.tableIcon(trainee)}
+        </TableCell>
+      </TableRow>
+
+    )));
+}
+
+render() {
+  const {
+    classes,
+    id,
+    onSelect,
+    count,
+    page,
+    onChangePage,
+    rowsPerPage,
+  } = this.props;
+  return (
+    <Paper className={classes.root}>
+      <Table className={classes.table} key={id} onRowSelection={onSelect}>
+        <TableHead>
+          <TableRow>
+            {this.renderHeadings()}
+            <TableCell />
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {this.renderRows()}
+        </TableBody>
+      </Table>
+      <TablePagination
+        component="div"
+        count={count}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        rowsPerPageOptions={[]}
+        backIconButtonProps={{
+          'aria-label': 'Previous Page',
+        }}
+        nextIconButtonProps={{
+          'aria-label': 'Next Page',
+        }}
+        onChangePage={onChangePage}
+      />
+    </Paper>
+  );
+}
 }
 TraineeTable.propTypes = {
   classes: PropTypes.objectOf(PropTypes.object).isRequired,
@@ -107,6 +159,11 @@ TraineeTable.propTypes = {
   orderBy: PropTypes.string,
   onSelect: PropTypes.func,
   onSort: PropTypes.func,
+  rowsPerPage: PropTypes.number,
+  count: PropTypes.number,
+  onChangePage: PropTypes.func,
+  page: PropTypes.number.isRequired,
+  actions: PropTypes.objectOf(PropTypes.object).isRequired,
 };
 TraineeTable.defaultProps = {
   columns: [],
@@ -114,7 +171,10 @@ TraineeTable.defaultProps = {
   id: '',
   order: '',
   orderBy: '',
+  rowsPerPage: 100,
   onSelect: () => {},
   onSort: () => {},
+  count: 100,
+  onChangePage: () => {},
 };
 export default withStyles(styles)(TraineeTable);
