@@ -48,9 +48,11 @@ const styles = theme => ({
 class EditDialog extends Component {
   constructor(props) {
     super(props);
+    const { data } = this.props;
+    const { name, email } = data;
     this.state = {
-      name: '',
-      email: '',
+      name,
+      email,
       error: {
         name: '',
         email: '',
@@ -130,7 +132,6 @@ class EditDialog extends Component {
       onSubmit,
       onClose,
       open,
-      data,
     } = this.props;
     return (
       <div>
@@ -157,7 +158,7 @@ class EditDialog extends Component {
                 onBlur={() => this.forBlur('name')}
                 margin="normal"
                 variant="outlined"
-                defaultValue={data.name}
+                value={name}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
@@ -176,7 +177,7 @@ class EditDialog extends Component {
                 onBlur={() => this.forBlur('email')}
                 type="email"
                 name="email"
-                defaultValue={data.email}
+                value={email}
                 autoComplete="email"
                 margin="normal"
                 variant="outlined"

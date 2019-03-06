@@ -68,16 +68,16 @@ handleSelect = (check) => {
 
 RemoveDialogSubmit = (data) => {
   console.log('Data Deleted', data);
-  this.setState({ removeDialog: false });
+  this.setState({ removeDialog: false, data: '' });
 };
 
 EditDialogSubmit = (...data) => {
-  this.setState({ editDialog: false });
+  this.setState({ editDialog: false, data: '' });
   console.log(data);
 };
 
   handleRemoveDialogClose = () => {
-    this.setState({ removeDialog: false });
+    this.setState({ removeDialog: false, data: '' });
   }
 
   handleEditDialogOpen = (value) => {
@@ -85,7 +85,7 @@ EditDialogSubmit = (...data) => {
   }
 
   handleEditDialogClose = () => {
-    this.setState({ editDialog: false });
+    this.setState({ editDialog: false, data: '' });
   }
 
   render() {
@@ -108,18 +108,24 @@ EditDialogSubmit = (...data) => {
           onClose={this.handleClose}
           onSubmit={this.handleClickOpen}
         />
-        <RemoveDialog
-          open={removeDialog}
-          data={data}
-          onSubmit={this.RemoveDialogSubmit}
-          onClose={this.handleRemoveDialogClose}
-        />
-        <EditDialog
-          open={editDialog}
-          data={data}
-          onSubmit={this.EditDialogSubmit}
-          onClose={this.handleEditDialogClose}
-        />
+        {
+          (data) ? (
+            <>
+              <RemoveDialog
+                open={removeDialog}
+                data={data}
+                onSubmit={this.RemoveDialogSubmit}
+                onClose={this.handleRemoveDialogClose}
+              />
+              <EditDialog
+                open={editDialog}
+                data={data}
+                onSubmit={this.EditDialogSubmit}
+                onClose={this.handleEditDialogClose}
+              />
+            </>
+          ) : ''
+        }
         <TraineeTable
           id="id"
           data={trainee}
