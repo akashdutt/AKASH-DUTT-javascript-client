@@ -29,7 +29,7 @@ class Navbar extends Component {
   }
 
   handlerLogout = () => {
-    localStorage.removeItem('token');
+    localStorage.removeItem('loginToken');
   };
 
   render() {
@@ -45,7 +45,7 @@ class Navbar extends Component {
             <Button color="inherit"><Link to="/textfield-demo" className={classes.forButton}>TEXTFIELD DEMO</Link></Button>
             <Button color="inherit"><Link to="/input-demo" className={classes.forButton}> INPUT DEMO</Link></Button>
             <Button color="inherit"><Link to="/children-demo" className={classes.forButton}>CHILDREN DEMO</Link></Button>
-            <Button color="inherit" onClick={this.handlerLogout()} className={classes.logOut}><Link to="/login" className={classes.forButton}>LOGOUT</Link></Button>
+            <Button color="inherit" onClick={this.handlerLogout} className={classes.logOut}><Link to="/login" className={classes.forButton}>LOGOUT</Link></Button>
           </Toolbar>
         </AppBar>
       </div>

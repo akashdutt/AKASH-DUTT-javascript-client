@@ -14,6 +14,7 @@ import Person from '@material-ui/icons/Person';
 import * as yup from 'yup';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import { SnackbarConsumer } from '../../../../contexts';
+import callApi from '../../../../libs/utils/api';
 
 const propType = {
   open: PropTypes.bool,
@@ -122,99 +123,115 @@ class EditDialog extends Component {
     }, () => this.validate(prop));
   }
 
-  render() {
-    const {
-      name,
-      email,
-      error,
-    } = this.state;
-    const {
-      classes,
-      onSubmit,
-      onClose,
-      open,
-    } = this.props;
-    return (
-      <SnackbarConsumer>
-        {({ openSnackbar }) => (
-          <div>
-            <Dialog
-              fullWidth
-              maxWidth="md"
-              open={open}
-              onClose={this.onClose}
-              aria-labelledby="alert-dialog-title"
-              aria-describedby="alert-dialog-description"
-            >
-              <DialogTitle id="alert-dialog-title">Edit Trainee</DialogTitle>
-              <DialogContent>
-                <DialogContentText id="alert-dialog-description">
-                Enter Your Trainee Details
-                </DialogContentText>
-                <form className={classes.superContainer} noValidate autoComplete="off">
-                  <TextField
-                    id="outlined-full-width"
-                    label="Name"
-                    fullWidth
-                    error={Boolean(error.name || '')}
-                    onChange={this.handleChange('name')}
-                    onBlur={() => this.forBlur('name')}
-                    margin="normal"
-                    variant="outlined"
-                    value={name}
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <Person />
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                  <FormHelperText className={classes.error}>{error.name}</FormHelperText>
-                  <TextField
-                    id="outlined-email-input"
-                    label="Email Address"
-                    fullWidth
-                    error={Boolean(error.email || '')}
-                    onChange={this.handleChange('email')}
-                    onBlur={() => this.forBlur('email')}
-                    type="email"
-                    name="email"
-                    value={email}
-                    autoComplete="email"
-                    margin="normal"
-                    variant="outlined"
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <Email />
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                  <FormHelperText className={classes.error}>{error.email}</FormHelperText>
-                </form>
-              </DialogContent>
-              <DialogActions>
-                <Button onClick={onClose} color="primary" autoFocus>
-              Cancel
-                </Button>
-                { this.hasError() ? (
-                  <Button onClick={() => { onSubmit(name, email); openSnackbar('Successfully Updated', 'success'); }} color="primary" autoFocus>
-              Submit
-                  </Button>
-                ) : (
-                  <Button color="primary" autoFocus disabled>
-              Submit
-                  </Button>
-                )}
-              </DialogActions>
-            </Dialog>
-          </div>
-        )}
-      </SnackbarConsumer>
-    );
+handleApiEdit = async (E, openSnackbar) => {
+  E.preventDefault();
+  const { data } = this.props;
+  const { name, email } = this.state;
+  const { _id } = data;
+  console.log('>', name, email, _id, '<');
+  const valueToEdit = { id: _id, name, email };
+  const response = await callApi(valueToEdit, '/trainee', 'put');
+  if (response.data.status) {
+    openSnackbar('Successfully Updated', 'success');
+  } else {
+    openSnackbar('not updated', 'error');
   }
+  console.log(response);
+}
+
+render() {
+  const {
+    name,
+    email,
+    error,
+  } = this.state;
+  const {
+    classes,
+    onSubmit,
+    onClose,
+    open,
+  } = this.props;
+  return (
+    <SnackbarConsumer>
+      {({ openSnackbar }) => (
+        <div>
+          <Dialog
+            fullWidth
+            maxWidth="md"
+            open={open}
+            onClose={this.onClose}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+          >
+            <DialogTitle id="alert-dialog-title">Edit Trainee</DialogTitle>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-description">
+                Enter Your Trainee Details
+              </DialogContentText>
+              <form className={classes.superContainer} noValidate autoComplete="off">
+                <TextField
+                  id="outlined-full-width"
+                  label="Name"
+                  fullWidth
+                  error={Boolean(error.name || '')}
+                  onChange={this.handleChange('name')}
+                  onBlur={() => this.forBlur('name')}
+                  margin="normal"
+                  variant="outlined"
+                  value={name}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Person />
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+                <FormHelperText className={classes.error}>{error.name}</FormHelperText>
+                <TextField
+                  id="outlined-email-input"
+                  label="Email Address"
+                  fullWidth
+                  error={Boolean(error.email || '')}
+                  onChange={this.handleChange('email')}
+                  onBlur={() => this.forBlur('email')}
+                  type="email"
+                  name="email"
+                  value={email}
+                  autoComplete="email"
+                  margin="normal"
+                  variant="outlined"
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Email />
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+                <FormHelperText className={classes.error}>{error.email}</FormHelperText>
+              </form>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={onClose} color="primary" autoFocus>
+              Cancel
+              </Button>
+              { this.hasError() ? (
+                <Button onClick={(E) => { this.handleApiEdit(E, openSnackbar); onSubmit(name, email); }} color="primary" autoFocus>
+              Submit
+                </Button>
+              ) : (
+                <Button color="primary" autoFocus disabled>
+              Submit
+                </Button>
+              )}
+            </DialogActions>
+          </Dialog>
+        </div>
+      )}
+    </SnackbarConsumer>
+  );
+}
 }
 EditDialog.propTypes = propType;
 EditDialog.defaultProps = defaultProps;

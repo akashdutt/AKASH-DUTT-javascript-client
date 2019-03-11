@@ -7,6 +7,7 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import PropTypes from 'prop-types';
 import { SnackbarConsumer } from '../../../../contexts';
+import callApi from '../../../../libs/utils/api';
 
 class RemoveDialog extends Component {
   constructor(props) {
@@ -14,6 +15,21 @@ class RemoveDialog extends Component {
     this.state = {
     };
   }
+
+  handleApiDelete = async (E, data, onSubmit, openSnackbar) => {
+    E.preventDefault();
+    const { _id } = data;
+    const id = _id;
+    console.log('id', id);
+    const response = await callApi({}, `/trainee/${id}`, 'delete');
+    onSubmit(data);
+    if (response.status) {
+      openSnackbar(response.data.message, 'success');
+    } else {
+      openSnackbar('cannot delete trainee', 'error');
+    }
+    console.log('response', response);
+  };
 
   render() {
     const {
@@ -44,9 +60,9 @@ class RemoveDialog extends Component {
                 </Button>
                 <Button
                   variant="contained"
-                  onClick={() => {
-                    onSubmit(data);
+                  onClick={(E) => {
                     if (data.createdAt >= traineeDate) {
+                      this.handleApiDelete(E, data, onSubmit, openSnackbar);
                       openSnackbar('Successfully Deleted', 'success');
                     } else {
                       openSnackbar('Cannot Delete', 'error');
