@@ -2,7 +2,14 @@ import React, { Component } from 'react';
 import Button from '@material-ui/core/Button';
 import moment from 'moment';
 import PropTypes from 'prop-types';
-import { AddDialog, TraineeTable } from './Components';
+import DeleteIcon from '@material-ui/icons/Delete';
+import EditIcon from '@material-ui/icons/Edit';
+import {
+  AddDialog,
+  TraineeTable,
+  EditDialog,
+  RemoveDialog,
+} from './Components';
 import trainee from './data/trainee';
 
 class TraineeList extends Component {
@@ -10,8 +17,12 @@ class TraineeList extends Component {
     super(props);
     this.state = {
       open: false,
+      editDialog: false,
+      removeDialog: false,
       order: 'desc',
       orderBy: '',
+      page: 0,
+      data: '',
     };
   }
 
@@ -47,8 +58,46 @@ handleSelect = (check) => {
     this.setState({ order: orderChange, orderBy: orderByChange });
   };
 
+  handleChangePage = (event, page) => {
+    this.setState({ page });
+  };
+
+  handleRemoveDialogOpen = (value) => {
+    this.setState({ removeDialog: true, data: value });
+  }
+
+RemoveDialogSubmit = (data) => {
+  console.log('Data Deleted', data);
+  this.setState({ removeDialog: false, data: '' });
+};
+
+EditDialogSubmit = (...data) => {
+  this.setState({ editDialog: false, data: '' });
+  console.log(data);
+};
+
+  handleRemoveDialogClose = () => {
+    this.setState({ removeDialog: false, data: '' });
+  }
+
+  handleEditDialogOpen = (value) => {
+    this.setState({ editDialog: true, data: value });
+  }
+
+  handleEditDialogClose = () => {
+    this.setState({ editDialog: false, data: '' });
+  }
+
   render() {
-    const { open, order, orderBy } = this.state;
+    const {
+      open,
+      order,
+      orderBy,
+      page,
+      editDialog,
+      removeDialog,
+      data,
+    } = this.state;
     return (
       <div>
         <Button variant="outlined" color="primary" onClick={this.handleClickButton}>
@@ -59,6 +108,24 @@ handleSelect = (check) => {
           onClose={this.handleClose}
           onSubmit={this.handleClickOpen}
         />
+        {
+          (data) ? (
+            <>
+              <RemoveDialog
+                open={removeDialog}
+                data={data}
+                onSubmit={this.RemoveDialogSubmit}
+                onClose={this.handleRemoveDialogClose}
+              />
+              <EditDialog
+                open={editDialog}
+                data={data}
+                onSubmit={this.EditDialogSubmit}
+                onClose={this.handleEditDialogClose}
+              />
+            </>
+          ) : ''
+        }
         <TraineeTable
           id="id"
           data={trainee}
@@ -77,10 +144,24 @@ handleSelect = (check) => {
             align: 'right',
             format: this.getDateFormatted,
           }]}
+          actions={[
+            {
+              icon: <EditIcon style={{ fontSize: 20 }} />,
+              handler: this.handleEditDialogOpen,
+            },
+            {
+              icon: <DeleteIcon style={{ fontSize: 20 }} />,
+              handler: this.handleRemoveDialogOpen,
+            },
+          ]}
           order={order}
           orderBy={orderBy}
           onSort={this.handleSort}
           onSelect={this.handleSelect}
+          count={100}
+          page={page}
+          rowsPerPage={10}
+          onChangePage={this.handleChangePage}
         />
       </div>
     );
