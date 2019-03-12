@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Button from '@material-ui/core/Button';
 import { Link as RouterLink } from 'react-router-dom';
 import Link from '@material-ui/core/Link';
-import { AddDialog } from './Components';
+import { AddDialog, TraineeTable } from './Components';
 import trainee from './data/trainee';
 
 class TraineeList extends Component {
@@ -43,6 +43,18 @@ class TraineeList extends Component {
           open={open}
           onClose={this.handleClose}
           onSubmit={this.handleClickOpen}
+        />
+        <TraineeTable
+          id="id"
+          data={trainee}
+          columns={[{
+            field: 'name',
+            label: 'Name',
+            align: 'center',
+          }, {
+            field: 'email',
+            label: 'Email Address',
+          }]}
         />
         <ul>
           {listItem}
