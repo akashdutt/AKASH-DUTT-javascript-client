@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Button from '@material-ui/core/Button';
-import { Link as RouterLink } from 'react-router-dom';
-import Link from '@material-ui/core/Link';
+import moment from 'moment';
+import PropTypes from 'prop-types';
 import { AddDialog, TraineeTable } from './Components';
 import trainee from './data/trainee';
 
@@ -10,6 +10,8 @@ class TraineeList extends Component {
     super(props);
     this.state = {
       open: false,
+      order: 'desc',
+      orderBy: '',
     };
   }
 
@@ -27,13 +29,26 @@ class TraineeList extends Component {
     });
   };
 
+  getDateFormatted = date => (moment(date).format('LLLL'));
+
+handleSelect = (check) => {
+  const { history } = this.props;
+  history.push(`trainee/${check}`);
+};
+
+  handleSort = (event, property) => {
+    const orderByChange = property;
+    let orderChange = 'asc';
+    const { order, orderBy } = this.state;
+    if (orderBy === property && order === 'asc') {
+      orderChange = 'desc';
+    }
+
+    this.setState({ order: orderChange, orderBy: orderByChange });
+  };
+
   render() {
-    const { open } = this.state;
-    const listItem = trainee.map(element => (
-      <li>
-        <Link component={RouterLink} to={`/trainee/${element.id}`}>{element.name}</Link>
-      </li>
-    ));
+    const { open, order, orderBy } = this.state;
     return (
       <div>
         <Button variant="outlined" color="primary" onClick={this.handleClickButton}>
@@ -54,13 +69,27 @@ class TraineeList extends Component {
           }, {
             field: 'email',
             label: 'Email Address',
+            format: value => value && value.toUpperCase(),
+          },
+          {
+            field: 'createdAt',
+            label: 'Date',
+            align: 'right',
+            format: this.getDateFormatted,
           }]}
+          order={order}
+          orderBy={orderBy}
+          onSort={this.handleSort}
+          onSelect={this.handleSelect}
         />
-        <ul>
-          {listItem}
-        </ul>
       </div>
     );
   }
 }
+TraineeList.propTypes = {
+  history: PropTypes.objectOf(PropTypes.object),
+};
+TraineeList.defaultProps = {
+  history: {},
+};
 export default TraineeList;
