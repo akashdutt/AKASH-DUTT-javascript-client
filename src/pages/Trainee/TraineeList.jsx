@@ -12,6 +12,7 @@ import {
 } from './Components';
 import trainee from './data/trainee';
 import callApi from '../../libs/utils/api';
+import { SnackbarConsumer } from '../../contexts';
 
 class TraineeList extends Component {
   constructor(props) {
@@ -28,6 +29,7 @@ class TraineeList extends Component {
       limit: 10,
       skip: 0,
       loading: true,
+      errAlert: '',
     };
   }
 
@@ -67,8 +69,16 @@ handleSelect = (check) => {
     this.setState({
       loading: true,
       page: pages,
-      limit: 10,
-      skip: 10 * pages + 1,
+    });
+    const { limit } = this.state;
+    const newLimit = limit;
+    const newSkip = pages * 10;
+
+    callApi({ limit: newLimit, skip: newSkip }, '/trainee', 'get').then((response) => {
+      this.setState({
+        listValue: response.data.data.records,
+        loading: false,
+      });
     });
   };
 
@@ -76,12 +86,12 @@ handleSelect = (check) => {
     this.setState({ removeDialog: true, data: value });
   }
 
-RemoveDialogSubmit = (data) => {
+removeDialogSubmit = (data) => {
   console.log('Data Deleted', data);
   this.setState({ removeDialog: false, data });
 };
 
-EditDialogSubmit = (...data) => {
+editDialogSubmit = (...data) => {
   this.setState({ editDialog: false, data });
   console.log(data);
 };
@@ -98,96 +108,126 @@ EditDialogSubmit = (...data) => {
     this.setState({ editDialog: false, data: '' });
   }
 
-  render() {
-    const {
-      open,
-      order,
-      orderBy,
-      page,
-      editDialog,
-      removeDialog,
-      data,
-      limit,
-      skip,
-      listValue,
-      loading,
-    } = this.state;
-    callApi({ limit, skip }, '/trainee', 'get').then((response) => {
+componentDidMount = () => {
+  const {
+    limit,
+    skip,
+  } = this.state;
+  callApi({ limit, skip }, '/trainee', 'get').then((response) => {
+    this.setState({
+      listValue: response.data.data.records,
+      loading: false,
+    });
+  })
+    .catch((err) => {
       this.setState({
-        listValue: response.data.data.records,
+        errAlert: err,
         loading: false,
       });
     });
-    return (
-      <div>
-        <Button variant="outlined" color="primary" onClick={this.handleClickButton}>
+}
+
+renderAlert = (openSnackbar) => {
+  openSnackbar('bad request', 'error');
+  this.setState({ errAlert: '' });
+}
+
+render() {
+  const {
+    open,
+    order,
+    orderBy,
+    page,
+    editDialog,
+    removeDialog,
+    data,
+    listValue,
+    loading,
+    errAlert,
+  } = this.state;
+
+  return (
+    <SnackbarConsumer>
+      {({ openSnackbar }) => {
+        if (errAlert === '') {
+          return (
+            <div>
+              <Button variant="outlined" color="primary" onClick={this.handleClickButton}>
           ADD TRAINEELIST
-        </Button>
-        <AddDialog
-          open={open}
-          onClose={this.handleClose}
-          onSubmit={this.handleClickOpen}
-        />
-        {
-          (data) ? (
-            <>
-              <RemoveDialog
-                open={removeDialog}
-                data={data}
-                onSubmit={this.RemoveDialogSubmit}
-                onClose={this.handleRemoveDialogClose}
+              </Button>
+              <AddDialog
+                open={open}
+                onClose={this.handleClose}
+                onSubmit={this.handleClickOpen}
               />
-              <EditDialog
-                open={editDialog}
-                data={data}
-                onSubmit={this.EditDialogSubmit}
-                onClose={this.handleEditDialogClose}
+              {
+                (data) ? (
+                  <>
+                    <RemoveDialog
+                      open={removeDialog}
+                      data={data}
+                      onSubmit={this.removeDialogSubmit}
+                      onClose={this.handleRemoveDialogClose}
+                    />
+                    <EditDialog
+                      open={editDialog}
+                      data={data}
+                      onSubmit={this.editDialogSubmit}
+                      onClose={this.handleEditDialogClose}
+                    />
+                  </>
+                ) : ''
+              }
+              <TraineeTable
+                id="id"
+                data={listValue || trainee}
+                columns={[{
+                  field: 'name',
+                  label: 'Name',
+                  align: 'center',
+                }, {
+                  field: 'email',
+                  label: 'Email Address',
+                  format: value => value && value.toUpperCase(),
+                },
+                {
+                  field: 'createdAt',
+                  label: 'Date',
+                  align: 'right',
+                  format: this.getDateFormatted,
+                }]}
+                actions={[
+                  {
+                    icon: <EditIcon style={{ fontSize: 20 }} />,
+                    handler: this.handleEditDialogOpen,
+                  },
+                  {
+                    icon: <DeleteIcon style={{ fontSize: 20 }} />,
+                    handler: this.handleRemoveDialogOpen,
+                  },
+                ]}
+                order={order}
+                orderBy={orderBy}
+                onSort={this.handleSort}
+                onSelect={this.handleSelect}
+                count={100}
+                page={page}
+                dataLength={listValue.length}
+                loading={loading}
+                rowsPerPage={10}
+                onChangePage={this.handleChangePage}
               />
-            </>
-          ) : ''
+            </div>
+          );
         }
-        <TraineeTable
-          id="id"
-          data={listValue || trainee}
-          columns={[{
-            field: 'name',
-            label: 'Name',
-            align: 'center',
-          }, {
-            field: 'email',
-            label: 'Email Address',
-            format: value => value && value.toUpperCase(),
-          },
-          {
-            field: 'createdAt',
-            label: 'Date',
-            align: 'right',
-            format: this.getDateFormatted,
-          }]}
-          actions={[
-            {
-              icon: <EditIcon style={{ fontSize: 20 }} />,
-              handler: this.handleEditDialogOpen,
-            },
-            {
-              icon: <DeleteIcon style={{ fontSize: 20 }} />,
-              handler: this.handleRemoveDialogOpen,
-            },
-          ]}
-          order={order}
-          orderBy={orderBy}
-          onSort={this.handleSort}
-          onSelect={this.handleSelect}
-          count={100}
-          page={page}
-          dataLength={listValue.length}
-          loading={loading}
-          rowsPerPage={10}
-          onChangePage={this.handleChangePage}
-        />
-      </div>
-    );
-  }
+
+        return (
+          this.renderAlert(openSnackbar)
+        );
+      }}
+    </SnackbarConsumer>
+  );
+}
 }
 TraineeList.propTypes = {
   history: PropTypes.objectOf(PropTypes.object),
