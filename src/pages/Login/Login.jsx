@@ -21,7 +21,7 @@ import { SnackbarConsumer } from '../../contexts';
 
 
 const schema = yup.object().shape({
-  emailAddress: yup
+  email: yup
     .string()
     .email()
     .required(),
@@ -33,7 +33,7 @@ const schema = yup.object().shape({
 const styles = theme => ({
   main: {
     width: 'auto',
-    display: 'block', // Fix IE 11 issue.
+    display: 'block',
     marginLeft: theme.spacing.unit * 3,
     marginRight: theme.spacing.unit * 3,
     [theme.breakpoints.up(400 + theme.spacing.unit * 3 * 2)]: {
@@ -75,19 +75,19 @@ class Login extends Component {
       showPassword: false,
       loading: false,
       credential: {
-        emailAddress: '',
+        email: '',
         password: '',
       },
       error: {
-        emailAddress: '',
+        email: '',
         password: '',
       },
       touched: {
-        emailAddress: false,
+        email: false,
         password: false,
       },
       hasError: {
-        emailAddress: false,
+        email: false,
         password: false,
       },
     };
@@ -99,9 +99,9 @@ class Login extends Component {
       error,
       hasError,
     } = this.state;
-    const { emailAddress, password } = credential;
+    const { email, password } = credential;
     schema.validate({
-      emailAddress,
+      email,
       password,
     }, { abortEarly: false })
       .then(() => {
@@ -162,13 +162,13 @@ class Login extends Component {
     const { history } = this.props;
     E.preventDefault();
     this.setState({ loading: true });
-    const response = await callApi(credential, 'user/login', 'post');
-    console.log(response);
+    const response = await callApi(credential, '/user/login', 'post');
+    console.log(response.data.data);
     if (response.status) {
       this.setState({
         loading: false,
       });
-      window.localStorage.setItem('token', JSON.stringify(response.data.data));
+      localStorage.setItem('loginToken', response.data.data);
       history.push('/trainee');
     } else {
       openSnackbar('Unauthorized Access', 'error');
@@ -199,12 +199,12 @@ class Login extends Component {
               <form className={classes.form}>
                 <TextField
                   id="outlined-email-input"
-                  label="Email"
+                  label="Email Address"
                   fullWidth
-                  error={Boolean(error.emailAddress || '')}
-                  onChange={this.handleChange('emailAddress')}
-                  onBlur={() => this.forBlur('emailAddress')}
-                  value={credential.emailAddress}
+                  error={Boolean(error.email || '')}
+                  onChange={this.handleChange('email')}
+                  onBlur={() => this.forBlur('email')}
+                  value={credential.email}
                   type="email"
                   name="email"
                   autoComplete="email"
@@ -218,7 +218,7 @@ class Login extends Component {
                     ),
                   }}
                 />
-                <FormHelperText className={classes.error}>{error.emailAddress}</FormHelperText>
+                <FormHelperText className={classes.error}>{error.email}</FormHelperText>
                 <TextField
                   id="outlined-password-input"
                   label="Password"
@@ -250,6 +250,7 @@ class Login extends Component {
                     type="submit"
                     fullWidth
                     variant="contained"
+                    disabled={loading}
                     color="primary"
                     className={classes.submit}
                     onClick={E => this.callApiHandler(E, openSnackbar)}

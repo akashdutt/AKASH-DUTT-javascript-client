@@ -8,7 +8,6 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import { withStyles } from '@material-ui/core/styles';
-import { Grid } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import Visibility from '@material-ui/icons/Visibility';
@@ -17,7 +16,9 @@ import Email from '@material-ui/icons/Email';
 import Person from '@material-ui/icons/Person';
 import * as yup from 'yup';
 import FormHelperText from '@material-ui/core/FormHelperText';
+import { CircularProgress, Grid } from '@material-ui/core';
 import { SnackbarConsumer } from '../../../../contexts';
+import callApi from '../../../../libs/utils/api';
 
 const propType = {
   open: PropTypes.bool,
@@ -52,17 +53,23 @@ const styles = theme => ({
   error: {
     color: 'red',
   },
+  spinner: {
+    color: 'black',
+  },
 });
 class AddDialog extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      loading: false,
       showPassword: false,
       showConfirmPassword: false,
-      password: '',
-      confirmPassword: '',
-      name: '',
-      email: '',
+      credential: {
+        password: '',
+        confirmPassword: '',
+        name: '',
+        email: '',
+      },
       error: {
         name: '',
         sport: '',
@@ -86,13 +93,17 @@ class AddDialog extends Component {
 
   validate = (value) => {
     const {
-      name,
-      email,
-      password,
-      confirmPassword,
+      credential,
       error,
       hasError,
     } = this.state;
+    const
+      {
+        name,
+        email,
+        password,
+        confirmPassword,
+      } = credential;
     schema.validate({
       name,
       email,
@@ -141,9 +152,9 @@ class AddDialog extends Component {
   }
 
   handleChange = prop => (event) => {
-    const { touched } = this.state;
+    const { touched, credential } = this.state;
     this.setState({
-      [prop]: event.target.value,
+      credential: { ...credential, [prop]: event.target.value },
       touched: { ...touched, [prop]: true },
     }, () => this.validate(prop));
   }
@@ -156,15 +167,37 @@ class AddDialog extends Component {
     this.setState(state => ({ showConfirmPassword: !state.showConfirmPassword }));
   };
 
+  handleCallApi = async (E, openSnackbar, onSubmit) => {
+    E.preventDefault();
+    const { credential } = this.state;
+    const { confirmPassword, ...rest } = credential;
+    this.setState({ loading: true }, () => {});
+    const response = await callApi(rest, '/trainee', 'post');
+    if (response.data.status) {
+      this.setState({
+        loading: false,
+      });
+      openSnackbar('trainee Added', 'success');
+    } else {
+      openSnackbar('Cannot Add Trainee', 'error');
+      this.setState({ loading: false });
+    }
+    console.log('inside handleCallApi', response);
+    const {
+      name,
+      email,
+      password,
+    } = credential;
+    onSubmit(name, email, password);
+  };
+
   render() {
     const {
       showPassword,
-      password,
-      confirmPassword,
       showConfirmPassword,
-      name,
-      email,
       error,
+      credential,
+      loading,
     } = this.state;
     const {
       classes,
@@ -172,6 +205,13 @@ class AddDialog extends Component {
       onClose,
       open,
     } = this.props;
+    const
+      {
+        name,
+        email,
+        password,
+        confirmPassword,
+      } = credential;
     return (
       <SnackbarConsumer>
         {({ openSnackbar }) => (
@@ -286,7 +326,11 @@ class AddDialog extends Component {
                           ),
                         }}
                       />
-                      <FormHelperText className={classes.error}>{error.confirmPassword}</FormHelperText>
+                      <FormHelperText
+                        className={classes.error}
+                      >
+                        {error.confirmPassword}
+                      </FormHelperText>
                     </Grid>
                   </Grid>
                 </form>
@@ -296,12 +340,14 @@ class AddDialog extends Component {
               Cancel
                 </Button>
                 { this.hasError() ? (
-                  <Button onClick={() => { onSubmit(name, email, password); openSnackbar('Added Trainee', 'success'); }} color="primary" autoFocus>
-              Submit
+                  <Button disabled={loading} onClick={(E) => { this.handleCallApi(E, openSnackbar, onSubmit); }} color="primary" autoFocus>
+                    {!loading
+                      ? <b>Submit</b>
+                      : <CircularProgress size={20} className={classes.spinner} />}
                   </Button>
                 ) : (
                   <Button onClick={onSubmit} color="primary" autoFocus disabled>
-              Submit
+                  Submit
                   </Button>
                 )}
               </DialogActions>

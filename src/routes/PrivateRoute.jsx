@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { PrivateLayout } from '../layouts';
 
 const PrivateRoute = ({ component: Component, ...rest }) => {
-  if (localStorage.getItem('token')) {
+  if (localStorage.getItem('loginToken')) {
     return (
       <Route
         {...rest}

@@ -11,11 +11,13 @@ import {
   RemoveDialog,
 } from './Components';
 import trainee from './data/trainee';
+import callApi from '../../libs/utils/api';
 
 class TraineeList extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      listValue: '',
       open: false,
       editDialog: false,
       removeDialog: false,
@@ -23,6 +25,9 @@ class TraineeList extends Component {
       orderBy: '',
       page: 0,
       data: '',
+      limit: 10,
+      skip: 0,
+      loading: true,
     };
   }
 
@@ -58,8 +63,13 @@ handleSelect = (check) => {
     this.setState({ order: orderChange, orderBy: orderByChange });
   };
 
-  handleChangePage = (event, page) => {
-    this.setState({ page });
+  handleChangePage = (event, pages) => {
+    this.setState({
+      loading: true,
+      page: pages,
+      limit: 10,
+      skip: 10 * pages + 1,
+    });
   };
 
   handleRemoveDialogOpen = (value) => {
@@ -68,11 +78,11 @@ handleSelect = (check) => {
 
 RemoveDialogSubmit = (data) => {
   console.log('Data Deleted', data);
-  this.setState({ removeDialog: false, data: '' });
+  this.setState({ removeDialog: false, data });
 };
 
 EditDialogSubmit = (...data) => {
-  this.setState({ editDialog: false, data: '' });
+  this.setState({ editDialog: false, data });
   console.log(data);
 };
 
@@ -97,7 +107,17 @@ EditDialogSubmit = (...data) => {
       editDialog,
       removeDialog,
       data,
+      limit,
+      skip,
+      listValue,
+      loading,
     } = this.state;
+    callApi({ limit, skip }, '/trainee', 'get').then((response) => {
+      this.setState({
+        listValue: response.data.data.records,
+        loading: false,
+      });
+    });
     return (
       <div>
         <Button variant="outlined" color="primary" onClick={this.handleClickButton}>
@@ -128,7 +148,7 @@ EditDialogSubmit = (...data) => {
         }
         <TraineeTable
           id="id"
-          data={trainee}
+          data={listValue || trainee}
           columns={[{
             field: 'name',
             label: 'Name',
@@ -160,6 +180,8 @@ EditDialogSubmit = (...data) => {
           onSelect={this.handleSelect}
           count={100}
           page={page}
+          dataLength={listValue.length}
+          loading={loading}
           rowsPerPage={10}
           onChangePage={this.handleChangePage}
         />

@@ -11,6 +11,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
 import TablePagination from '@material-ui/core/TablePagination';
 import IconButton from '@material-ui/core/IconButton';
+import withLoaderAndMessage from '../../../../components/HOC/withLoaderAndMessage';
 
 const styles = theme => ({
   root: {
@@ -31,6 +32,9 @@ const styles = theme => ({
     display: 'flex',
     padding: 4,
     marginRight: 20,
+  },
+  empty: {
+    textAlign: 'center',
   },
 });
 class TraineeTable extends Component {
@@ -87,6 +91,9 @@ renderRows = () => {
     columns,
     onSelect,
   } = this.props;
+  if (!data.length) {
+    return (<div style={{ textAlign: 'center' }}><b>OOPS!, No More Trainees</b></div>);
+  }
   return (
     data.map(trainee => (
       <TableRow
@@ -177,4 +184,4 @@ TraineeTable.defaultProps = {
   count: 100,
   onChangePage: () => {},
 };
-export default withStyles(styles)(TraineeTable);
+export default withStyles(styles)(withLoaderAndMessage(TraineeTable));

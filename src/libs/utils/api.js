@@ -1,14 +1,18 @@
 import axios from 'axios';
 
 const callApi = async (credential, url, call) => {
+  const { skip, limit } = credential;
   try {
     const response = await axios({
       method: call,
-      url: `https://express-training.herokuapp.com/api/${url}`,
-      data: {
-        email: credential.emailAddress,
-        password: credential.password,
+      baseURL: 'https://express-training.herokuapp.com/api',
+      url,
+      data: credential,
+      params: {
+        limit: limit || 10,
+        skip: skip || 0,
       },
+      headers: { Authorization: localStorage.getItem('loginToken') },
     });
 
     return response;
