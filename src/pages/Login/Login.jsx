@@ -15,6 +15,10 @@ import IconButton from '@material-ui/core/IconButton';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import * as yup from 'yup';
+import { CircularProgress } from '@material-ui/core';
+import callApi from '../../libs/utils/api';
+import { SnackbarConsumer } from '../../contexts';
+
 
 const schema = yup.object().shape({
   emailAddress: yup
@@ -59,15 +63,21 @@ const styles = theme => ({
   error: {
     color: 'red',
   },
+  spinner: {
+    color: 'darkGrey',
+  },
 });
 
 class Login extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      emailAddress: '',
       showPassword: false,
-      password: '',
+      loading: false,
+      credential: {
+        emailAddress: '',
+        password: '',
+      },
       error: {
         emailAddress: '',
         password: '',
@@ -85,11 +95,11 @@ class Login extends Component {
 
   validate = (value) => {
     const {
-      emailAddress,
-      password,
+      credential,
       error,
       hasError,
     } = this.state;
+    const { emailAddress, password } = credential;
     schema.validate({
       emailAddress,
       password,
@@ -136,9 +146,9 @@ class Login extends Component {
   }
 
   handleChange = prop => (event) => {
-    const { touched } = this.state;
+    const { touched, credential } = this.state;
     this.setState({
-      [prop]: event.target.value,
+      credential: { ...credential, [prop]: event.target.value },
       touched: { ...touched, [prop]: true },
     }, () => this.validate(prop));
   }
@@ -147,105 +157,132 @@ class Login extends Component {
     this.setState(state => ({ showPassword: !state.showPassword }));
   };
 
+  callApiHandler = async (E, openSnackbar) => {
+    const { credential } = this.state;
+    const { history } = this.props;
+    E.preventDefault();
+    this.setState({ loading: true });
+    const response = await callApi(credential, 'user/login', 'post');
+    console.log(response);
+    if (response.status) {
+      this.setState({
+        loading: false,
+      });
+      window.localStorage.setItem('token', JSON.stringify(response.data.data));
+      history.push('/trainee');
+    } else {
+      openSnackbar('Unauthorized Access', 'error');
+      this.setState({ loading: false });
+    }
+  }
+
   render() {
     const {
       showPassword,
-      emailAddress,
-      password,
+      credential,
       error,
+      loading,
     } = this.state;
     const { classes } = this.props;
     return (
-      <main className={classes.main}>
-        <CssBaseline />
-        <Paper className={classes.paper}>
-          <Avatar className={classes.avatar}>
-            <LockOutlinedIcon />
-          </Avatar>
-          <Typography component="h1" variant="h5">
+      <SnackbarConsumer>
+        {({ openSnackbar }) => (
+          <main className={classes.main}>
+            <CssBaseline />
+            <Paper className={classes.paper}>
+              <Avatar className={classes.avatar}>
+                <LockOutlinedIcon />
+              </Avatar>
+              <Typography component="h1" variant="h5">
             Login
-          </Typography>
-          <form className={classes.form}>
-            <TextField
-              id="outlined-email-input"
-              label="Email"
-              fullWidth
-              error={Boolean(error.emailAddress || '')}
-              onChange={this.handleChange('emailAddress')}
-              onBlur={() => this.forBlur('emailAddress')}
-              value={emailAddress}
-              type="email"
-              name="email"
-              autoComplete="email"
-              margin="normal"
-              variant="outlined"
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <Email />
-                  </InputAdornment>
-                ),
-              }}
-            />
-            <FormHelperText className={classes.error}>{error.emailAddress}</FormHelperText>
-            <TextField
-              id="outlined-password-input"
-              label="Password"
-              fullWidth
-              error={Boolean(error.password || '')}
-              type={showPassword ? 'text' : 'password'}
-              value={password}
-              onChange={this.handleChange('password')}
-              onBlur={() => this.forBlur('password')}
-              autoComplete="current-password"
-              margin="normal"
-              variant="outlined"
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <IconButton
-                      aria-label="Toggle password visibility"
-                      onClick={this.handleClickShowPassword}
-                    >
-                      {showPassword ? <Visibility /> : <VisibilityOff />}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-            />
-            <FormHelperText className={classes.error}>{error.password}</FormHelperText>
-            {this.hasError() ? (
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                color="primary"
-                className={classes.submit}
-              >
-              Sign in
-              </Button>
-            )
-              : (
-                <Button
-                  disabled
-                  type="submit"
+              </Typography>
+              <form className={classes.form}>
+                <TextField
+                  id="outlined-email-input"
+                  label="Email"
                   fullWidth
-                  variant="contained"
-                  color="primary"
-                  className={classes.submit}
-                >
+                  error={Boolean(error.emailAddress || '')}
+                  onChange={this.handleChange('emailAddress')}
+                  onBlur={() => this.forBlur('emailAddress')}
+                  value={credential.emailAddress}
+                  type="email"
+                  name="email"
+                  autoComplete="email"
+                  margin="normal"
+                  variant="outlined"
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Email />
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+                <FormHelperText className={classes.error}>{error.emailAddress}</FormHelperText>
+                <TextField
+                  id="outlined-password-input"
+                  label="Password"
+                  fullWidth
+                  error={Boolean(error.password || '')}
+                  type={showPassword ? 'text' : 'password'}
+                  value={credential.password}
+                  onChange={this.handleChange('password')}
+                  onBlur={() => this.forBlur('password')}
+                  autoComplete="current-password"
+                  margin="normal"
+                  variant="outlined"
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <IconButton
+                          aria-label="Toggle password visibility"
+                          onClick={this.handleClickShowPassword}
+                        >
+                          {showPassword ? <Visibility /> : <VisibilityOff />}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+                <FormHelperText className={classes.error}>{error.password}</FormHelperText>
+                {this.hasError() ? (
+                  <Button
+                    type="submit"
+                    fullWidth
+                    variant="contained"
+                    color="primary"
+                    className={classes.submit}
+                    onClick={E => this.callApiHandler(E, openSnackbar)}
+                  >
+                    {!loading
+                      ? <b>Sign in</b>
+                      : <CircularProgress size={25} className={classes.spinner} />}
+                  </Button>
+                )
+                  : (
+                    <Button
+                      disabled
+                      type="submit"
+                      fullWidth
+                      variant="contained"
+                      color="primary"
+                      className={classes.submit}
+                    >
             Sign in
-                </Button>
-              )
-            }
-          </form>
-        </Paper>
-      </main>
+                    </Button>
+                  )
+                }
+              </form>
+            </Paper>
+          </main>
+        )}
+      </SnackbarConsumer>
     );
   }
 }
 Login.propTypes = {
   classes: PropTypes.objectOf(PropTypes.object).isRequired,
+  history: PropTypes.objectOf(PropTypes.object).isRequired,
 };
 export { Login };
 export default withStyles(styles)(Login);
