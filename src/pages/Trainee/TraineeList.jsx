@@ -36,6 +36,7 @@ class TraineeList extends Component {
   handleClickOpen = (...value) => {
     this.setState({ open: false });
     console.log(...value);
+    this.callChangedPage();
   };
 
   handleClickButton = () => {
@@ -89,11 +90,42 @@ handleSelect = (check) => {
 removeDialogSubmit = (data) => {
   console.log('Data Deleted', data);
   this.setState({ removeDialog: false, data });
+  this.setState({
+    loading: true,
+  });
+  const { page } = this.state;
+  const { limit } = this.state;
+  const newLimit = limit;
+  const newSkip = page * 10;
+
+  callApi({ limit: newLimit, skip: newSkip }, '/trainee', 'get').then((response) => {
+    this.setState({
+      listValue: response.data.data.records,
+      loading: false,
+    }, () => {
+      const { listValue } = this.state;
+      if (!listValue.length) {
+        const previousPage = page - 1;
+        this.setState({
+          page: previousPage,
+          loading: true,
+        });
+        const newUpdatedSkip = previousPage * 10;
+        callApi({ limit: newLimit, skip: newUpdatedSkip }, '/trainee', 'get').then((result) => {
+          this.setState({
+            listValue: result.data.data.records,
+            loading: false,
+          });
+        });
+      }
+    });
+  });
 };
 
 editDialogSubmit = (...data) => {
   this.setState({ editDialog: false, data });
   console.log(data);
+  this.callChangedPage();
 };
 
   handleRemoveDialogClose = () => {
@@ -107,6 +139,24 @@ editDialogSubmit = (...data) => {
   handleEditDialogClose = () => {
     this.setState({ editDialog: false, data: '' });
   }
+
+  callChangedPage = () => {
+    this.setState({
+      loading: true,
+    });
+    const { page } = this.state;
+    const { limit } = this.state;
+    const newLimit = limit;
+    const newSkip = page * 10;
+
+    callApi({ limit: newLimit, skip: newSkip }, '/trainee', 'get').then((response) => {
+      this.setState({
+        listValue: response.data.data.records,
+        loading: false,
+      });
+    });
+  };
+
 
 componentDidMount = () => {
   const {
