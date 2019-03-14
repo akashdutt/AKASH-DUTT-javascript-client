@@ -160,6 +160,7 @@ class Login extends Component {
   callApiHandler = async (E, openSnackbar) => {
     const { credential } = this.state;
     const { history } = this.props;
+    console.log(history);
     E.preventDefault();
     this.setState({ loading: true });
     const response = await callApi(credential, '/user/login', 'post');
@@ -282,8 +283,8 @@ class Login extends Component {
   }
 }
 Login.propTypes = {
-  classes: PropTypes.objectOf(PropTypes.object).isRequired,
-  history: PropTypes.objectOf(PropTypes.object).isRequired,
+  classes: PropTypes.objectOf(PropTypes.string).isRequired,
+  history: PropTypes.shape({action: PropTypes.string.isRequired, length: PropTypes.number.isRequired}).isRequired,
 };
 export { Login };
 export default withStyles(styles)(Login);
