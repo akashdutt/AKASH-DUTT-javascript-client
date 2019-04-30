@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Typography } from '@material-ui/core';
 import Math from '../../components';
 
 class ChildrenDemo extends Component {
@@ -13,78 +14,78 @@ class ChildrenDemo extends Component {
         <Math first={5} second={7} operator="+">
           {(first, second, operator, result) => (
             <div>
-              <h1>
+              <Typography>
                 {first}
                 {operator}
                 {second}
                 {'='}
                 {result}
-              </h1>
+              </Typography>
             </div>
           )}
         </Math>
         <Math first={8} second={7} operator="-">
           {(first, second, operator, result) => (
             <div>
-              <h1>
+              <Typography>
                 {first}
                 {operator}
                 {second}
                 {'='}
                 {result}
-              </h1>
+              </Typography>
             </div>
           )}
         </Math>
         <Math first={45} second={9} operator="/">
           {(first, second, operator, result) => (
             <div>
-              <h1>
+              <Typography>
                 {first}
                 {operator}
                 {second}
                 {'='}
                 {result}
-              </h1>
+              </Typography>
             </div>
           )}
         </Math>
         <Math first={45} second={0} operator="/">
           {(first, second, operator, result) => (
             <div>
-              <h1>
+              <Typography>
                 {first}
                 {operator}
                 {second}
                 {'='}
                 {result}
-              </h1>
+              </Typography>
             </div>
           )}
         </Math>
         <Math first={5} second={6} operator="*">
           {(first, second, operator, result) => (
             <div>
-              <h1>
+              <Typography>
                 {first}
                 {operator}
                 {second}
                 {'='}
                 {result}
-              </h1>
+              </Typography>
             </div>
           )}
         </Math>
         <Math first={4} second={8} operator="^">
           {(first, second, operator, result) => (
             <div>
-              <h1>
+              <Typography>
                 {first}
                 {operator}
                 {second}
                 {'='}
                 {result}
-              </h1>
+              </Typography>
             </div>
           )}
         </Math>

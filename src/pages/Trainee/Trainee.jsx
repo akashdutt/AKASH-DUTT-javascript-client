@@ -26,6 +26,8 @@ class Trainee extends Component {
   }
 }
 Trainee.propTypes = {
-  match: PropTypes.objectOf(PropTypes.object).isRequired,
+  match: PropTypes.shape(
+    { path: PropTypes.string.isRequired, isExact: PropTypes.bool.isRequired },
+  ).isRequired,
 };
 export default Trainee;

@@ -19,6 +19,6 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
   return <Redirect to="/login" />;
 };
 PrivateRoute.propTypes = {
-  component: PropTypes.element.isRequired,
+  component: PropTypes.func.isRequired,
 };
 export default PrivateRoute;

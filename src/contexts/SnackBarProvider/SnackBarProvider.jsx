@@ -114,7 +114,7 @@ class SnackBarProvider extends Component {
 }
 SnackBarProvider.propTypes = {
   children: PropTypes.element.isRequired,
-  classes: PropTypes.objectOf(PropTypes.object).isRequired,
+  classes: PropTypes.objectOf(PropTypes.string).isRequired,
 };
 export const SnackbarConsumer = SnackBarContext.Consumer;
 export default withStyles(styles)(SnackBarProvider);

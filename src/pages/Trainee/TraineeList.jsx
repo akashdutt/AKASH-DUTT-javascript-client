@@ -280,7 +280,11 @@ render() {
 }
 }
 TraineeList.propTypes = {
-  history: PropTypes.objectOf(PropTypes.object),
+  history: PropTypes.shape(
+    {
+      length: PropTypes.number.isRequired, action: PropTypes.string.isRequired,
+    },
+  ),
 };
 TraineeList.defaultProps = {
   history: {},

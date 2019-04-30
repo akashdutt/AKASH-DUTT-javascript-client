@@ -1,3 +1,4 @@
+/* eslint-disable react/forbid-prop-types */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
@@ -92,32 +93,33 @@ renderRows = () => {
     onSelect,
   } = this.props;
   return (
-    data.map(trainee => (
-      <TableRow
-        key={trainee.id}
-        className={classes.row}
-        hover
-      >
-        {
-          columns.map(Tcell => (
-            <TableCell key={Tcell.field} align={Tcell.align} onClick={() => onSelect(trainee.id)}>
-              {Tcell.format ? Tcell.format(trainee[Tcell.field]) : trainee[Tcell.field]}
-            </TableCell>
-          ))
-        }
-        <TableCell>
-          {this.tableIcon(trainee)}
-        </TableCell>
-      </TableRow>
-
-    )));
+    data.map((trainee) => {
+      const { _id } = trainee;
+      return (
+        <TableRow
+          key={_id}
+          className={classes.row}
+          hover
+        >
+          {
+            columns.map(Tcell => (
+              <TableCell key={Tcell.field} align={Tcell.align} onClick={() => onSelect(_id)}>
+                {Tcell.format ? Tcell.format(trainee[Tcell.field]) : trainee[Tcell.field]}
+              </TableCell>
+            ))
+          }
+          <TableCell>
+            {this.tableIcon(trainee)}
+          </TableCell>
+        </TableRow>
+      );
+    }));
 }
 
 render() {
   const {
     classes,
     id,
-    onSelect,
     count,
     page,
     onChangePage,
@@ -125,7 +127,7 @@ render() {
   } = this.props;
   return (
     <Paper className={classes.root}>
-      <Table className={classes.table} key={id} onRowSelection={onSelect}>
+      <Table className={classes.table} key={id}>
         <TableHead>
           <TableRow>
             {this.renderHeadings()}
@@ -155,9 +157,9 @@ render() {
 }
 }
 TraineeTable.propTypes = {
-  classes: PropTypes.objectOf(PropTypes.object).isRequired,
-  columns: PropTypes.objectOf(PropTypes.object),
-  data: PropTypes.objectOf(PropTypes.object),
+  classes: PropTypes.objectOf(PropTypes.string).isRequired,
+  columns: PropTypes.array,
+  data: PropTypes.array,
   id: PropTypes.string,
   order: PropTypes.string,
   orderBy: PropTypes.string,
@@ -167,7 +169,7 @@ TraineeTable.propTypes = {
   count: PropTypes.number,
   onChangePage: PropTypes.func,
   page: PropTypes.number.isRequired,
-  actions: PropTypes.objectOf(PropTypes.object).isRequired,
+  actions: PropTypes.array.isRequired,
 };
 TraineeTable.defaultProps = {
   columns: [],
