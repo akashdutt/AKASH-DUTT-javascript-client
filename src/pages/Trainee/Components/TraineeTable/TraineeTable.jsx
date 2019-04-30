@@ -11,7 +11,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
 import TablePagination from '@material-ui/core/TablePagination';
 import IconButton from '@material-ui/core/IconButton';
-import withLoaderAndMessage from '../../../../components/HOC/withLoaderAndMessage';
+import { withLoaderAndMessage } from '../../../../components';
 
 const styles = theme => ({
   root: {
@@ -91,9 +91,6 @@ renderRows = () => {
     columns,
     onSelect,
   } = this.props;
-  if (!data.length) {
-    return (<div style={{ textAlign: 'center' }}><b>OOPS!, No More Trainees</b></div>);
-  }
   return (
     data.map(trainee => (
       <TableRow
